@@ -1,0 +1,44 @@
+{
+    "name": "arealtime/module-generator",
+    "description": "An Artisan command package for generating Laravel modules following a clean, modular architecture.",
+    "version": "1.0.0",
+    "type": "module",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "artisan",
+        "module",
+        "generator",
+        "clean architecture"
+    ],
+    "autoload": {
+        "psr-4": {
+            "Arealtime\\ModuleGenerator\\App\\": "src/app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Arash Taghavi",
+            "email": "arash.taghavi69@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.3"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "homepage": "https://github.com/arealtime/module-generator",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/arealtime/module-generator"
+        }
+    ],
+      "extra": {
+        "laravel": {
+            "providers": [
+            "Arealtime\\ModuleGenerator\\App\\Providers\\ModuleGeneratorServiceProvider"
+            ]
+        }
+    }
+}
