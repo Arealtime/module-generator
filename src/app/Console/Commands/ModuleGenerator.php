@@ -32,13 +32,13 @@ class ModuleGenerator extends Command
         $moduleName = $this->argument('name');
 
         $directories = [
-            base_path($this->basePath . $moduleName . '/app/Http/Controllers'),
-            base_path($this->basePath . $moduleName . '/app/Models'),
-            base_path($this->basePath . $moduleName . '/app/Providers'),
-            base_path($this->basePath . $moduleName . '/app/Console/Commands'),
-            base_path($this->basePath . $moduleName . '/database/migrations'),
-            base_path($this->basePath . $moduleName . '/config'),
-            base_path($this->basePath . $moduleName . '/routes'),
+            base_path($this->basePath . $moduleName . '/src/app/Http/Controllers'),
+            base_path($this->basePath . $moduleName . '/src/app/Models'),
+            base_path($this->basePath . $moduleName . '/src/app/Providers'),
+            base_path($this->basePath . $moduleName . '/src/app/Console/Commands'),
+            base_path($this->basePath . $moduleName . '/src/database/migrations'),
+            base_path($this->basePath . $moduleName . '/src/config'),
+            base_path($this->basePath . $moduleName . '/src/routes'),
         ];
 
         foreach ($directories as $directory) {
@@ -66,7 +66,7 @@ class ModuleGenerator extends Command
     {
         $namespace = "{$this->namespace}{$moduleName}\\App\\Http\\Controllers";
 
-        $controllerPath = base_path($this->basePath . $moduleName . '/app/Http/Controllers/' . $moduleName . 'Controller.php');
+        $controllerPath = base_path($this->basePath . $moduleName . '/src/app/Http/Controllers/' . $moduleName . 'Controller.php');
         if (!file_exists($controllerPath)) {
             $stub = "<?php\n\nnamespace $namespace;\n\nuse Illuminate\\Routing\\Controller;\n\nclass {$moduleName}Controller extends Controller {}\n";
             file_put_contents($controllerPath, $stub);
@@ -80,7 +80,7 @@ class ModuleGenerator extends Command
     {
         $namespace = "{$this->namespace}{$moduleName}\\App\\Models";
 
-        $modelPath = base_path($this->basePath . $moduleName . '/app/Models/' . $moduleName . '.php');
+        $modelPath = base_path($this->basePath . $moduleName . '/src/app/Models/' . $moduleName . '.php');
         if (!file_exists($modelPath)) {
             $stub = "<?php\n\nnamespace $namespace;\n\nuse Illuminate\\Database\\Eloquent\\Model;\n\nclass {$moduleName} extends Model\n{\n    protected \$fillable = [];\n}\n";
             file_put_contents($modelPath, $stub);
@@ -94,7 +94,7 @@ class ModuleGenerator extends Command
     {
         $namespace = "{$this->namespace}{$moduleName}\\App\\Providers";
 
-        $providerPath = base_path($this->basePath . $moduleName . '/app/Providers/' . $moduleName . 'ServiceProvider.php');
+        $providerPath = base_path($this->basePath . $moduleName . '/src/app/Providers/' . $moduleName . 'ServiceProvider.php');
         if (!file_exists($providerPath)) {
             $stub = "<?php\n\nnamespace $namespace;\n\nuse Illuminate\\Support\\ServiceProvider;\n\nclass {$moduleName}ServiceProvider extends ServiceProvider\n{\n    public function register()\n    {\n        // Register bindings\n    }\n\n    public function boot()\n    {\n        // Bootstrapping\n    }\n}\n";
             file_put_contents($providerPath, $stub);
@@ -108,7 +108,7 @@ class ModuleGenerator extends Command
     {
         $namespace = "{$this->namespace}{$moduleName}\\App\\Console\\Commands";
 
-        $providerPath = base_path($this->basePath . $moduleName . '/app/Console/Commands/' . $moduleName . '.php');
+        $providerPath = base_path($this->basePath . $moduleName . '/src/app/Console/Commands/' . $moduleName . '.php');
         if (!file_exists($providerPath)) {
             $stub = "<?php\n\nnamespace $namespace;\n\nuse Illuminate\\Console\\Command;\n\nclass $moduleName extends Command\n{\n    protected \$signature = 'app:{$moduleName}';\n    protected \$description = 'Command for $moduleName module';\n    public function handle()\n    {\n        \$this->info('{$moduleName} executed successfully.');\n    }\n}\n";
             file_put_contents($providerPath, $stub);
@@ -121,7 +121,7 @@ class ModuleGenerator extends Command
 
     private function createMigration($moduleName)
     {
-        $migrationPath = base_path($this->basePath . $moduleName . '/database/migrations/' . date('Y_m_d_His') . '_create_' . $moduleName . '_table.php');
+        $migrationPath = base_path($this->basePath . $moduleName . '/src/database/migrations/' . date('Y_m_d_His') . '_create_' . Str::snake($moduleName) . '_table.php');
         if (!file_exists($migrationPath)) {
             $stub = "<?php\n\nuse Illuminate\\Database\\Migrations\\Migration;\nuse Illuminate\\Database\\Schema\\Blueprint;\nuse Illuminate\\Support\\Facades\\Schema;\n\nclass Create" . ucwords($moduleName) . "Table extends Migration\n{\n    public function up()\n    {\n        Schema::create('$moduleName', function (Blueprint \$table) {\n            \$table->id();\n            \$table->timestamps();\n        });\n    }\n\n    public function down()\n    {\n        Schema::dropIfExists('$moduleName');\n    }\n}\n";
             file_put_contents($migrationPath, $stub);
@@ -133,7 +133,7 @@ class ModuleGenerator extends Command
 
     private function createConfigFile($moduleName)
     {
-        $configPath = base_path($this->basePath . $moduleName . '/config/' . Str::lower('arealtime-' . $moduleName) . '.php');
+        $configPath = base_path($this->basePath . $moduleName . '/src/config/' . Str::lower('arealtime-' . $moduleName) . '.php');
         if (!file_exists($configPath)) {
             $stub = "<?php\n\nreturn [\n    // Configuration options for $moduleName\n];\n";
             file_put_contents($configPath, $stub);
@@ -144,7 +144,7 @@ class ModuleGenerator extends Command
     }
     private function createRouteFile($moduleName)
     {
-        $routesPath = base_path($this->basePath . $moduleName . '/routes/api.php');
+        $routesPath = base_path($this->basePath . $moduleName . '/src/routes/api.php');
         if (!file_exists($routesPath)) {
             $stub = "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\n\n// Define your routes for the $moduleName module here.\n";
             file_put_contents($routesPath, $stub);
@@ -179,7 +179,7 @@ class ModuleGenerator extends Command
                 ],
                 "autoload" => [
                     "psr-4" => [
-                        $namespace => "app/"
+                        $namespace => "src/app/"
                     ]
                 ],
                 "authors" => [
