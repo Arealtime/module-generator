@@ -24,10 +24,10 @@ In your Laravel project's `composer.json`, add the following:
 ```json
 "repositories": [
     {
-        "type": "path",
-        "url": "packages/Arealtime/ModuleGenerator"
+        "type": "vcs",
+        "url": "https://github.com/Arealtime/module-generator"
     }
-],
+]
 "require": {
     "arealtime/module-generator": "*"
 }

@@ -5,10 +5,11 @@ namespace Arealtime\ModuleGenerator\App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Helper\Table;
+use Illuminate\Support\Facades\File;
 
 class ModuleGenerator extends Command
 {
-    protected $signature = 'arealtime:module {action} {name?}';
+    protected $signature = 'arealtime:module {action?} {name?}';
 
     protected $description = 'Generate a new module structure in packages/Arealtime';
 
@@ -68,29 +69,68 @@ class ModuleGenerator extends Command
         $this->displayTable();
         $this->line('🎉 Module structure generated successfully!');
     }
-    private function listModules() {}
-    private function showHelp()
+
+    private function listModules()
     {
+        $modulePath = base_path('vendor/arealtime');
+
+        if (!File::exists($modulePath)) {
+            $this->error('❌ No modules found in vendor/arealtime.');
+            return;
+        }
+
+        $directories = File::directories($modulePath);
+
+        if (empty($directories)) {
+            $this->info('ℹ️ No modules found.');
+            return;
+        }
+
         $lines = [];
-        $lines[] = "╔────────────────────────────────────────────────────────────────────────────╗";
-        $lines[] = "│                                                                            │";
-        $lines[] = "│         \033[4m\033[1;32m📚 Arealtime Module Generator v1.0.0 — Command Usage Guide\033[0m         │";
-        $lines[] = "│                                                                            │";
-        $lines[] = "│  \033[1;37m🛠  Usage: \033[1;36mphp artisan arealtime:module {action} {name?}\033[0m                   │";
-        $lines[] = "│                                                                            │";
-        $lines[] = "│  \033[1;37m📝 Available actions: \033[0m                                                    │";
-        $lines[] = "│    \033[1;35m- ⚙️  generate:\033[0;37m Generate a new module with the provided name.\033[0m            │";
-        $lines[] = "│    \033[1;35m- 📄 list:\033[0;37m List all the available modules.\033[0m                              │";
-        $lines[] = "│    \033[1;35m- ❓ help:\033[0;37m Display this help message.\033[0m                                   │";
-        $lines[] = "│                                                                            │";
-        $lines[] = "╚────────────────────────────────────────────────────────────────────────────╝";
+        $lines[] = "╔════════════════════════════════════════════════════════════════════════════╗";
+        $lines[] = "║                \033[1;34m📦 Available Arealtime Modules\033[0m                              ║";
+        $lines[] = "╠════════════════════════════════════════════════════════════════════════════╣";
+        $lines[] = "║ \033[1;37m🔹 Module Name\033[0m                                                             ║";
+        $lines[] = "╟────────────────────────────────────────────────────────────────────────────╢";
+
+        foreach ($directories as $dir) {
+            $name = basename($dir);
+            $line = sprintf("║ \033[1;32m📁 %s\033[0m", str_pad($name, 68));
+            $lines[] = $line . "    ║";
+        }
+
+        $lines[] = "╚════════════════════════════════════════════════════════════════════════════╝";
 
         $this->line(implode("\n", $lines));
     }
 
 
+    private function showHelp()
+    {
+        $lines = [];
+        $lines[] = "╔───────────────────────────────────────────────────────────────────────────────────────╗";
+        $lines[] = "│                                                                                       │";
+        $lines[] = "│              \033[4m\033[1;32m📚 Arealtime Module Generator v1.0.0 — Command Usage Guide\033[0m               │";
+        $lines[] = "│                                                                                       │";
+        $lines[] = "│  \033[1;37m🛠  Usage: \033[1;36mphp artisan arealtime:module {action} {name?}\033[0m                              │";
+        $lines[] = "│                                                                                       │";
+        $lines[] = "│  \033[1;37m📝 Available actions: \033[0m                                                               │";
+        $lines[] = "│    \033[1;35m- ⚙️  generate:\033[0;37m Generate a new module with the provided name.\033[0m                       │";
+        $lines[] = "│    \033[1;35m- 📄 list:\033[0;37m List all the available modules.\033[0m                                         │";
+        $lines[] = "│    \033[1;35m- ❓ help:\033[0;37m Display this help message.\033[0m                                              │";
+        $lines[] = "│                                                                                       │";
+        $lines[] = "│ \033[0;36m╔═══════════════════════════════════════════════════════════════════════════════════╗\033[0m │";
+        $lines[] = "│ \033[0;36m║ \033[1;37m💻 Command \033[0;32m                                         \033[1;37m📝 Description\033[0;36m                ║\033[0m │";
+        $lines[] = "│ \033[0;36m╠═══════════════════════════════════════════════════════════════════════════════════╣\033[0m │";
+        $lines[] = "│ \033[0;36m║ \033[1;34mphp artisan arealtime:module generate `ModuleName`\033[0m  \033[0;37mGenerate a new module.\033[0;36m        ║\033[0m │";
+        $lines[] = "│ \033[0;36m║ \033[1;34mphp artisan arealtime:module list\033[0;37m                   \033[0;37mList all available modules.\033[0;36m   ║\033[0m │";
+        $lines[] = "│ \033[0;36m║ \033[1;34mphp artisan arealtime:module help\033[0;37m                   \033[0;37mDisplay this help message.\033[0;36m    ║\033[0m │";
+        $lines[] = "│ \033[0;36m╚═══════════════════════════════════════════════════════════════════════════════════╝\033[0m │";
+        $lines[] = "│                                                                                       │";
+        $lines[] = "╚───────────────────────────────────────────────────────────────────────────────────────╝";
 
-
+        $this->line(implode("\n", $lines));
+    }
 
     private function addResult(string $type, string $path, bool $created)
     {
