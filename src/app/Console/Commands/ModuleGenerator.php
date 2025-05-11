@@ -8,18 +8,34 @@ use Symfony\Component\Console\Helper\Table;
 
 class ModuleGenerator extends Command
 {
-    protected $signature = 'module:generate {name}';
+    protected $signature = 'arealtime:module {action} {name?}';
+
     protected $description = 'Generate a new module structure in packages/Arealtime';
 
     private string $basePath = 'packages/Arealtime/';
+
     private string $namespace = 'Arealtime\\';
+
     private array $results = [];
+
     private int $step = 1;
 
     public function handle()
     {
+        $action = $this->argument('action');
+
         $moduleName = $this->argument('name');
 
+        match ($action) {
+            'generate' => $this->generateModule($moduleName),
+            'list' => $this->listModules(),
+            'help' => $this->showHelp(),
+            default => $this->error("Unknown action: {$action}"),
+        };
+    }
+
+    private function generateModule(string $moduleName)
+    {
         $directories = [
             'Http/Controllers',
             'Models',
@@ -52,6 +68,29 @@ class ModuleGenerator extends Command
         $this->displayTable();
         $this->line('🎉 Module structure generated successfully!');
     }
+    private function listModules() {}
+    private function showHelp()
+    {
+        $lines = [];
+        $lines[] = "╔────────────────────────────────────────────────────────────────────────────╗";
+        $lines[] = "│                                                                            │";
+        $lines[] = "│         \033[4m\033[1;32m📚 Arealtime Module Generator v1.0.0 — Command Usage Guide\033[0m         │";
+        $lines[] = "│                                                                            │";
+        $lines[] = "│  \033[1;37m🛠  Usage: \033[1;36mphp artisan arealtime:module {action} {name?}\033[0m                   │";
+        $lines[] = "│                                                                            │";
+        $lines[] = "│  \033[1;37m📝 Available actions: \033[0m                                                    │";
+        $lines[] = "│    \033[1;35m- ⚙️  generate:\033[0;37m Generate a new module with the provided name.\033[0m            │";
+        $lines[] = "│    \033[1;35m- 📄 list:\033[0;37m List all the available modules.\033[0m                              │";
+        $lines[] = "│    \033[1;35m- ❓ help:\033[0;37m Display this help message.\033[0m                                   │";
+        $lines[] = "│                                                                            │";
+        $lines[] = "╚────────────────────────────────────────────────────────────────────────────╝";
+
+        $this->line(implode("\n", $lines));
+    }
+
+
+
+
 
     private function addResult(string $type, string $path, bool $created)
     {
@@ -197,6 +236,8 @@ class ModuleGenerator extends Command
             $this->addResult('Composer', $path, false);
         }
     }
+
+    private function createReadme($moduleName) {}
 
     private function displayTable()
     {
