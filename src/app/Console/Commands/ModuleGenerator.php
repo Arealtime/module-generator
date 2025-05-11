@@ -27,6 +27,16 @@ class ModuleGenerator extends Command
 
         $moduleName = $this->argument('name');
 
+        if ($action === 'generate' && !$moduleName) {
+            $this->error('❌ You must provide a module name for generation.');
+            return;
+        }
+
+        if (!preg_match('/^[A-Za-z][A-Za-z0-9_]*$/', $moduleName)) {
+            $this->error('❌ Module name must be alphanumeric and start with a letter.');
+            return;
+        }
+
         match ($action) {
             'generate' => $this->generateModule($moduleName),
             'list' => $this->listModules(),
@@ -103,7 +113,6 @@ class ModuleGenerator extends Command
 
         $this->line(implode("\n", $lines));
     }
-
 
     private function showHelp()
     {
