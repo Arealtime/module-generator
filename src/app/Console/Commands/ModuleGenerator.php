@@ -35,6 +35,7 @@ class ModuleGenerator extends Command
             base_path($this->basePath . $moduleName . '/app/Http/Controllers'),
             base_path($this->basePath . $moduleName . '/app/Models'),
             base_path($this->basePath . $moduleName . '/app/Providers'),
+            base_path($this->basePath . $moduleName . '/app/Console/Commands'),
             base_path($this->basePath . $moduleName . '/database/migrations'),
             base_path($this->basePath . $moduleName . '/config'),
             base_path($this->basePath . $moduleName . '/routes'),
@@ -52,6 +53,7 @@ class ModuleGenerator extends Command
         $this->createController($moduleName);
         $this->createModel($moduleName);
         $this->createServiceProvider($moduleName);
+        $this->createCommand($moduleName);
         $this->createMigration($moduleName);
         $this->createConfigFile($moduleName);
         $this->createRouteFile($moduleName);
@@ -101,6 +103,21 @@ class ModuleGenerator extends Command
             $this->info("ServiceProvider already exists: $providerPath");
         }
     }
+
+    private function createCommand($moduleName)
+    {
+        $namespace = "{$this->namespace}{$moduleName}\\App\\Console\\Commands";
+
+        $providerPath = base_path($this->basePath . $moduleName . '/app/Console/Commands/' . $moduleName . '.php');
+        if (!file_exists($providerPath)) {
+            $stub = "<?php\n\nnamespace $namespace;\n\nuse Illuminate\\Console\\Command;\n\nclass $moduleName extends Command\n{\n    protected \$signature = 'app:{$moduleName}';\n    protected \$description = 'Command for $moduleName module';\n    public function handle()\n    {\n        \$this->info('{$moduleName} executed successfully.');\n    }\n}\n";
+            file_put_contents($providerPath, $stub);
+            $this->info("ServiceProvider created: $providerPath");
+        } else {
+            $this->info("ServiceProvider already exists: $providerPath");
+        }
+    }
+
 
     private function createMigration($moduleName)
     {
