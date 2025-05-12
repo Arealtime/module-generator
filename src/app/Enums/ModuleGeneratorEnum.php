@@ -2,6 +2,9 @@
 
 namespace Arealtime\ModuleGenerator\App\Enums;
 
+/**
+ * Defines available actions for the module generator command.
+ */
 enum ModuleGeneratorEnum: string
 {
     case Generate = 'generate';

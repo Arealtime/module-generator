@@ -5,16 +5,25 @@ namespace Arealtime\ModuleGenerator\App\Traits;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Helper\Table;
 
+/**
+ * Handles file and folder creation logic for generating a new module structure.
+ */
 trait StructureCreator
 {
     private string $basePath = 'packages/Arealtime/';
+
     private string $namespace = 'Arealtime\\';
 
     private array $results = [];
 
     private int $step = 1;
 
-    private function createFolderStructure(string $moduleName)
+    /**
+     * Creates the folder structure for the given module.
+     *
+     * @return void
+     */
+    private function createFolderStructure(): void
     {
         $directories = [
             'Http/Controllers',
@@ -27,7 +36,7 @@ trait StructureCreator
         ];
 
         foreach ($directories as $subPath) {
-            $fullPath = base_path($this->basePath . $moduleName . '/src/app/' . $subPath);
+            $fullPath = base_path($this->basePath . $this->moduleName . '/src/app/' . $subPath);
             if (!file_exists($fullPath)) {
                 mkdir($fullPath, 0755, true);
                 $this->addResult('Directory', realpath($fullPath), true);
@@ -36,13 +45,19 @@ trait StructureCreator
             }
         }
     }
-    private function createController($moduleName)
+
+    /**
+     * Creates a controller file for the given module.
+     *
+      * @return void
+     */
+    private function createController(): void
     {
-        $namespace = "{$this->namespace}{$moduleName}\\App\\Http\\Controllers";
-        $path = base_path($this->basePath . $moduleName . '/src/app/Http/Controllers/' . $moduleName . 'Controller.php');
+        $namespace = "{$this->namespace}{$this->moduleName}\\App\\Http\\Controllers";
+        $path = base_path($this->basePath . $this->moduleName . '/src/app/Http/Controllers/' . $this->moduleName . 'Controller.php');
 
         if (!file_exists($path)) {
-            $stub = "<?php\n\nnamespace $namespace;\n\nuse Illuminate\\Routing\\Controller;\n\nclass {$moduleName}Controller extends Controller {}\n";
+            $stub = "<?php\n\nnamespace $namespace;\n\nuse Illuminate\\Routing\\Controller;\n\nclass {$this->moduleName}Controller extends Controller {}\n";
             file_put_contents($path, $stub);
             $this->addResult('Controller', $path, true);
         } else {
@@ -50,13 +65,18 @@ trait StructureCreator
         }
     }
 
-    private function createModel($moduleName)
+    /**
+     * Creates a model file for the given module.
+     *
+     * @return void
+     */
+    private function createModel(): void
     {
-        $namespace = "{$this->namespace}{$moduleName}\\App\\Models";
-        $path = base_path($this->basePath . $moduleName . '/src/app/Models/' . $moduleName . '.php');
+        $namespace = "{$this->namespace}{$this->moduleName}\\App\\Models";
+        $path = base_path($this->basePath . $this->moduleName . '/src/app/Models/' . $this->moduleName . '.php');
 
         if (!file_exists($path)) {
-            $stub = "<?php\n\nnamespace $namespace;\n\nuse Illuminate\\Database\\Eloquent\\Model;\n\nclass {$moduleName} extends Model\n{\n    protected \$fillable = [];\n}\n";
+            $stub = "<?php\n\nnamespace $namespace;\n\nuse Illuminate\\Database\\Eloquent\\Model;\n\nclass {$this->moduleName} extends Model\n{\n    protected \$fillable = [];\n}\n";
             file_put_contents($path, $stub);
             $this->addResult('Model', $path, true);
         } else {
@@ -64,13 +84,18 @@ trait StructureCreator
         }
     }
 
-    private function createServiceProvider($moduleName)
+    /**
+     * Creates a service provider file for the given module.
+     *
+     * @return void
+     */
+    private function createServiceProvider(): void
     {
-        $namespace = "{$this->namespace}{$moduleName}\\App\\Providers";
-        $path = base_path($this->basePath . $moduleName . '/src/app/Providers/' . $moduleName . 'ServiceProvider.php');
+        $namespace = "{$this->namespace}{$this->moduleName}\\App\\Providers";
+        $path = base_path($this->basePath . $this->moduleName . '/src/app/Providers/' . $this->moduleName . 'ServiceProvider.php');
 
         if (!file_exists($path)) {
-            $stub = "<?php\n\nnamespace $namespace;\n\nuse Illuminate\\Support\\ServiceProvider;\n\nclass {$moduleName}ServiceProvider extends ServiceProvider\n{\n    public function register()\n    {\n        // Register bindings\n    }\n\n    public function boot()\n    {\n        // Bootstrapping\n    }\n}\n";
+            $stub = "<?php\n\nnamespace $namespace;\n\nuse Illuminate\\Support\\ServiceProvider;\n\nclass {$this->moduleName}ServiceProvider extends ServiceProvider\n{\n    public function register()\n    {\n        // Register bindings\n    }\n\n    public function boot()\n    {\n        // Bootstrapping\n    }\n}\n";
             file_put_contents($path, $stub);
             $this->addResult('ServiceProvider', $path, true);
         } else {
@@ -78,14 +103,19 @@ trait StructureCreator
         }
     }
 
-    private function createCommand($moduleName)
+    /**
+     * Creates a console command file for the given module.
+     *
+     * @return void
+     */
+    private function createCommand(): void
     {
-        $namespace = "{$this->namespace}{$moduleName}\\App\\Console\\Commands";
-        $path = base_path($this->basePath . $moduleName . '/src/app/Console/Commands/' . $moduleName . '.php');
-        $commandSignature = 'arealtime:' . Str::snake($moduleName);
+        $namespace = "{$this->namespace}{$this->moduleName}\\App\\Console\\Commands";
+        $path = base_path($this->basePath . $this->moduleName . '/src/app/Console/Commands/' . $this->moduleName . '.php');
+        $commandSignature = 'arealtime:' . Str::snake($this->moduleName);
 
         if (!file_exists($path)) {
-            $stub = "<?php\n\nnamespace $namespace;\n\nuse Illuminate\\Console\\Command;\n\nclass $moduleName extends Command\n{\n    protected \$signature = '$commandSignature';\n    protected \$description = 'Command for $moduleName module';\n    public function handle()\n    {\n        \$this->info('{$moduleName} executed successfully.');\n    }\n}\n";
+            $stub = "<?php\n\nnamespace $namespace;\n\nuse Illuminate\\Console\\Command;\n\nclass $this->moduleName extends Command\n{\n    protected \$signature = '$commandSignature';\n    protected \$description = 'Command for $this->moduleName module';\n    public function handle()\n    {\n        \$this->info('{$this->moduleName} executed successfully.');\n    }\n}\n";
             file_put_contents($path, $stub);
             $this->addResult('Command', $path, true);
         } else {
@@ -93,15 +123,20 @@ trait StructureCreator
         }
     }
 
-    private function createMigration($moduleName)
+    /**
+     * Creates a migration file for the given module.
+     *
+     * @return void
+     */
+    private function createMigration(): void
     {
-        $snake = Str::snake($moduleName);
+        $snake = Str::snake($this->moduleName);
         $pluralSnake = Str::plural($snake);
         $timestamp = date('Y_m_d_His');
-        $path = base_path($this->basePath . $moduleName . "/src/database/migrations/{$timestamp}_create_{$pluralSnake}_table.php");
+        $path = base_path($this->basePath . $this->moduleName . "/src/database/migrations/{$timestamp}_create_{$pluralSnake}_table.php");
 
         if (!file_exists($path)) {
-            $stub = "<?php\n\nuse Illuminate\\Database\\Migrations\\Migration;\nuse Illuminate\\Database\\Schema\\Blueprint;\nuse Illuminate\\Support\\Facades\\Schema;\n\nclass Create" . ucwords(Str::plural($moduleName)) . "Table extends Migration\n{\n    public function up()\n    {\n        Schema::create('$pluralSnake', function (Blueprint \$table) {\n            \$table->id();\n            \$table->timestamps();\n        });\n    }\n\n    public function down()\n    {\n        Schema::dropIfExists('$pluralSnake');\n    }\n}\n";
+            $stub = "<?php\n\nuse Illuminate\\Database\\Migrations\\Migration;\nuse Illuminate\\Database\\Schema\\Blueprint;\nuse Illuminate\\Support\\Facades\\Schema;\n\nclass Create" . ucwords(Str::plural($this->moduleName)) . "Table extends Migration\n{\n    public function up()\n    {\n        Schema::create('$pluralSnake', function (Blueprint \$table) {\n            \$table->id();\n            \$table->timestamps();\n        });\n    }\n\n    public function down()\n    {\n        Schema::dropIfExists('$pluralSnake');\n    }\n}\n";
             file_put_contents($path, $stub);
             $this->addResult('Migration', $path, true);
         } else {
@@ -109,13 +144,18 @@ trait StructureCreator
         }
     }
 
-    private function createConfigFile($moduleName)
+    /**
+     * Creates a config file for the given module.
+     *
+     * @return void
+     */
+    private function createConfigFile(): void
     {
-        $filename = Str::lower('arealtime-' . $moduleName) . '.php';
-        $path = base_path($this->basePath . $moduleName . '/src/config/' . $filename);
+        $filename = Str::lower('arealtime-' . $this->moduleName) . '.php';
+        $path = base_path($this->basePath . $this->moduleName . '/src/config/' . $filename);
 
         if (!file_exists($path)) {
-            $stub = "<?php\n\nreturn [\n    // Configuration options for $moduleName\n];\n";
+            $stub = "<?php\n\nreturn [\n    // Configuration options for $this->moduleName\n];\n";
             file_put_contents($path, $stub);
             $this->addResult('Config', $path, true);
         } else {
@@ -123,12 +163,17 @@ trait StructureCreator
         }
     }
 
-    private function createRouteFile($moduleName)
+    /**
+     * Creates a route file for the given module.
+     *
+     * @return void
+     */
+    private function createRouteFile(): void
     {
-        $path = base_path($this->basePath . $moduleName . '/src/routes/api.php');
+        $path = base_path($this->basePath . $this->moduleName . '/src/routes/api.php');
 
         if (!file_exists($path)) {
-            $stub = "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\n\n// Define your routes for the $moduleName module here.\n";
+            $stub = "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\n\n// Define your routes for the $this->moduleName module here.\n";
             file_put_contents($path, $stub);
             $this->addResult('Route', $path, true);
         } else {
@@ -136,15 +181,20 @@ trait StructureCreator
         }
     }
 
-    private function createComposerJson($moduleName)
+    /**
+     * Creates a composer.json file for the given module.
+     *
+     * @return void
+     */
+    private function createComposerJson(): void
     {
-        $path = base_path($this->basePath . $moduleName . '/composer.json');
+        $path = base_path($this->basePath . $this->moduleName . '/composer.json');
 
         if (!file_exists($path)) {
-            $packageName = "arealtime/" . Str::kebab($moduleName);
-            $namespace = "Arealtime\\$moduleName\\App\\";
-            $provider = "Arealtime\\$moduleName\\App\\Providers\\{$moduleName}ServiceProvider";
-            $gitUrl = "https://github.com/arealtime/" . Str::kebab($moduleName);
+            $packageName = "arealtime/" . Str::kebab($this->moduleName);
+            $namespace = "Arealtime\\$this->moduleName\\App\\";
+            $provider = "Arealtime\\$this->moduleName\\App\\Providers\\{$this->moduleName}ServiceProvider";
+            $gitUrl = "https://github.com/arealtime/" . Str::kebab($this->moduleName);
 
             $composer = [
                 "name" => $packageName,
@@ -170,9 +220,19 @@ trait StructureCreator
         }
     }
 
-    private function createReadme($moduleName) {}
+    /**
+     * Creates a readme file for the given module.
+     *
+     * @return void
+     */
+    private function createReadme() {}
 
-    private function displayTable()
+    /**
+     * Displays a table with the results of the file and folder creation process.
+     *
+     * @return void
+     */
+    private function displayTable(): void
     {
         $table = new Table($this->output);
         $table->setHeaders(['Step', 'Status', 'Action', 'Type', 'Path']);
@@ -180,7 +240,15 @@ trait StructureCreator
         $table->render();
     }
 
-    private function addResult(string $type, string $path, bool $created)
+    /**
+     * Adds a result to the results array.
+     *
+     * @param string $type The type of the result (e.g., 'Controller', 'Migration').
+     * @param string $path The file path of the created file or folder.
+     * @param bool $created Indicates whether the file/folder was created (true) or already exists (false).
+     * @return void
+     */
+    private function addResult(string $type, string $path, bool $created): void
     {
         $this->results[] = [
             $this->step++,

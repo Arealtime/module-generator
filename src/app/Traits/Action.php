@@ -5,25 +5,49 @@ namespace Arealtime\ModuleGenerator\App\Traits;
 use Arealtime\ModuleGenerator\App\Enums\ModuleGeneratorEnum;
 use Illuminate\Support\Facades\File;
 
+/**
+ * Provides action methods for the module generator, including generating,
+ * listing, and displaying help for modules.
+ */
 trait Action
 {
-    private function generateModule(string $moduleName)
+    private ?string $action;
+
+    private ?string $moduleName;
+
+    private function set(?string $action, ?string $moduleName)
     {
-        $this->createFolderStructure($moduleName);
-        $this->createController($moduleName);
-        $this->createModel($moduleName);
-        $this->createServiceProvider($moduleName);
-        $this->createCommand($moduleName);
-        $this->createMigration($moduleName);
-        $this->createConfigFile($moduleName);
-        $this->createRouteFile($moduleName);
-        $this->createComposerJson($moduleName);
+        $this->action = $action;
+        $this->moduleName = $moduleName;
+    }
+
+    /**
+     * Generates the module structure and necessary files.
+     *
+     * @return void
+     */
+    private function generateModule(): void
+    {
+        $this->createFolderStructure();
+        $this->createController();
+        $this->createModel();
+        $this->createServiceProvider();
+        $this->createCommand();
+        $this->createMigration();
+        $this->createConfigFile();
+        $this->createRouteFile();
+        $this->createComposerJson();
 
         $this->displayTable();
         $this->line('🎉 Module structure generated successfully!');
     }
 
-    private function listModules()
+    /**
+     * Lists all the available modules in the vendor/arealtime directory.
+     *
+     * @return void
+     */
+    private function listModules(): void
     {
         $modulePath = base_path('vendor/arealtime');
 
@@ -39,25 +63,27 @@ trait Action
             return;
         }
 
-        $lines = [];
-        $lines[] = "╔════════════════════════════════════════════════════════════════════════════╗";
-        $lines[] = "║                \033[1;34m📦 Available Arealtime Modules\033[0m                              ║";
-        $lines[] = "╠════════════════════════════════════════════════════════════════════════════╣";
-        $lines[] = "║ \033[1;37m🔹 Module Name\033[0m                                                             ║";
-        $lines[] = "╟────────────────────────────────────────────────────────────────────────────╢";
-
+        $lines[] = "╔────────────────────────────────────────────────╗";
+        $lines[] = "│                                                │";
+        $lines[] = "│         \033[4m\033[1;32m📦 Available Arealtime Modules\033[0m         │";
+        $lines[] = "│                                                │";
         foreach ($directories as $dir) {
             $name = basename($dir);
-            $line = sprintf("║ \033[1;32m📁 %s\033[0m", str_pad($name, 68));
-            $lines[] = $line . "    ║";
+            $line = sprintf("│ \033[1;37m📁 %s\033[0m", str_pad($name, 44));
+            $lines[] = $line . "│";
         }
-
-        $lines[] = "╚════════════════════════════════════════════════════════════════════════════╝";
+        $lines[] = "│                                                │";
+        $lines[] = "╚────────────────────────────────────────────────╝";
 
         $this->line(implode("\n", $lines));
     }
 
-    private function showHelp()
+    /**
+     * Displays the usage guide and available actions for the module generator.
+     *
+     * @return void
+     */
+    private function showHelp(): void
     {
         $lines = [];
         $lines[] = "╔───────────────────────────────────────────────────────────────────────────────────────╗";
@@ -84,10 +110,15 @@ trait Action
         $this->line(implode("\n", $lines));
     }
 
-    private function apply(?string $action, ?string $moduleName)
+    /**
+     * Executes the corresponding action based on the input action string.
+     *
+     * @return void
+     */
+    private function apply(): void
     {
-        match ($action) {
-            ModuleGeneratorEnum::Generate->value => $this->generateModule($moduleName),
+        match ($this->action) {
+            ModuleGeneratorEnum::Generate->value => $this->generateModule(),
             ModuleGeneratorEnum::List->value => $this->listModules(),
             ModuleGeneratorEnum::Help->value => $this->showHelp(),
             default => $this->showHelp(),
