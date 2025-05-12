@@ -1,4 +1,4 @@
-# 🛠️ Module Generator for Laravel
+# 🛠️ Module Generator For Laravel
 
 An Artisan command package for generating Laravel modules following a clean, modular architecture.  
 This package helps you easily create and manage modules in your Laravel projects, following the principles of clean architecture.

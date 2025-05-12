@@ -49,7 +49,7 @@ trait StructureCreator
     /**
      * Creates a controller file for the given module.
      *
-      * @return void
+     * @return void
      */
     private function createController(): void
     {
@@ -225,7 +225,67 @@ trait StructureCreator
      *
      * @return void
      */
-    private function createReadme() {}
+    private function createReadme()
+    {
+        $path = base_path($this->basePath . $this->moduleName . '/README.md');
+
+        if (!file_exists($path)) {
+            $moduleName = Str::kebab($this->moduleName);
+
+            $readmeContent = "# 🛠️ $this->moduleName Module For Laravel\n\n";
+            $readmeContent .= "DESCRIPTION...\n\n";
+            $readmeContent .= "> 🔗 Repository: [github.com/Arealtime/$moduleName](https://github.com/Arealtime/$moduleName)\n\n";
+            $readmeContent .= "---\n\n";
+            $readmeContent .= "## ✨ Features\n\n";
+            $readmeContent .= "- ✅ ...\n";
+            $readmeContent .= "- ✅ ...\n";
+            $readmeContent .= "- ✅ ...\n";
+            $readmeContent .= "- ✅ Stores detailed exception data including message, trace, user info, request info, and more.\n\n";
+            $readmeContent .= "---\n\n";
+            $readmeContent .= "## 🚀 Installation\n\n";
+            $readmeContent .= "In your Laravel project's `composer.json`, add the following:\n\n";
+            $readmeContent .= "```json\n";
+            $readmeContent .= "\"repositories\": [\n";
+            $readmeContent .= "    {\n";
+            $readmeContent .= "        \"type\": \"vcs\",\n";
+            $readmeContent .= "        \"url\": \"https://github.com/Arealtime/$moduleName\"\n";
+            $readmeContent .= "    }\n";
+            $readmeContent .= "]\n";
+            $readmeContent .= "\"require\": {\n";
+            $readmeContent .= "    \"arealtime/$moduleName\": \"*\"\n";
+            $readmeContent .= "}\n";
+            $readmeContent .= "```\n\n";
+            $readmeContent .= "Then run:\n\n";
+            $readmeContent .= "```bash\n";
+            $readmeContent .= "composer update\n";
+            $readmeContent .= "```\n";
+            $readmeContent .= "---\n\n";
+            $readmeContent .= "## 📋 Usage\n\n";
+            $readmeContent .= "DESCRIPTION...\n\n";
+            $readmeContent .= "---\n\n";
+            $readmeContent .= "## 👤 Author\n\n";
+            $readmeContent .= "**Arash Taghavi**  \n";
+            $readmeContent .= "📧 arash.taghavi69@gmail.com  \n";
+            $readmeContent .= "🔗 [GitHub: arash-sh](https://github.com/arash-sh)\n\n";
+            $readmeContent .= "---\n\n";
+            $readmeContent .= "## 📄 License\n\n";
+            $readmeContent .= "MIT © Arealtime\n\n";
+            $readmeContent .= "---\n\n";
+            $readmeContent .= "## ⭐️ Contribute & Support\n\n";
+            $readmeContent .= "- 🌟 Star the repository\n";
+            $readmeContent .= "- 🛠️ Fork and improve the package\n";
+            $readmeContent .= "- 🐛 Submit issues or feature requests\n\n";
+            $readmeContent .= "---\n\n";
+            $readmeContent .= "> _Built with ❤️ to help you scale Laravel the modular way._\n";
+
+            file_put_contents($path, $readmeContent);
+
+            $this->addResult('Readme', $path, true);
+        } else {
+            $this->addResult('Readme', $path, false);
+        }
+    }
+
 
     /**
      * Displays a table with the results of the file and folder creation process.

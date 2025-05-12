@@ -37,6 +37,7 @@ trait Action
         $this->createConfigFile();
         $this->createRouteFile();
         $this->createComposerJson();
+        $this->createReadme();
 
         $this->displayTable();
         $this->line('🎉 Module structure generated successfully!');
